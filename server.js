@@ -62,3 +62,19 @@ app.get('/api/v1/projects/:id', (request, response) => {
       response.status(500).json({ error });
     });
 });
+
+app.delete('/api/v1/projects/:id', (request, response) => {
+  const id = request.params.id;
+
+  database('projects').where({ id }).del()
+    .then(deleted => {
+      if (!deleted) {
+        response.sendStatus(202);
+      } else {
+        response.sendStatus(204);
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
