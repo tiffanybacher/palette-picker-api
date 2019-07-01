@@ -46,3 +46,19 @@ app.get('/api/v1/projects', (request, response) => {
       response.status(500).json({ error });
     });
 });
+
+app.get('/api/v1/projects/:id', (request, response) => {
+  const id = request.params.id;
+  
+  database('projects').where({ id }).select()
+    .then(project => {
+      if (project.length) {
+        response.status(200).json(project[0]);
+      } else {
+        response.status(404).json({ error: `Project with id of ${id} was not found.` });
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
