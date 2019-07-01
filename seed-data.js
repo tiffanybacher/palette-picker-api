@@ -1,28 +1,34 @@
 const projects = [
   { 
     name: 'Band Poster',
-    palette: {
-      name: 'Reggae Colors',
-      colors: [
-        '5F0F40',
-        '9A031E',
-        'FB8B24',
-        'E36414',
-        '0F4C5C'
-      ]
-    }
+    palettes: [
+      {
+        name: 'Reggae Colors',
+        colors: [
+          '5F0F40',
+          '9A031E',
+          'FB8B24',
+          'E36414',
+          '0F4C5C'
+        ]
+      }
+    ]
   },
   { 
     name: 'Website',
-    palette: {
-      name: 'Website Colors',
-      colors: [
-        '495867',
-        '577399',
-        'BDD5EA',
-        'F7F7FF',
-        'FE5F55'
-      ]
-    }
+    palettes: [
+      {
+        name: 'Website Colors',
+        colors: [
+          '495867',
+          '577399',
+          'BDD5EA',
+          'F7F7FF',
+          'FE5F55'
+        ]
+      }
+    ]
   }
 ]
+
+module.exports = projects;
