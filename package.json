@@ -2,16 +2,16 @@
   "name": "pp-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest --forceExit",
+    "test:watch": "jest --watchAll",
     "start": "nodemon server.js",
     "lint": "eslint src/"
   },
-  "author": "",
+  "author": "Tiffany Bacher & Brennan Duffey",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.17.1",
     "knex": "^0.18.1",
     "pg": "^7.11.0",
