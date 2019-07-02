@@ -79,6 +79,23 @@ app.get('/api/v1/projects/:id', (request, response) => {
     });
 });
 
+app.patch('/api/v1/projects/:id', (request, response) => {
+  const id = request.params.id;
+  const { name } = request.body;
+
+  database('projects').where({ id }).update({ name })
+    .then(count => {
+      if (count) {
+        response.sendStatus(204);
+      } else {
+        response.sendStatus(202);
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 app.delete('/api/v1/projects/:id', (request, response) => {
   const id = request.params.id;
 
