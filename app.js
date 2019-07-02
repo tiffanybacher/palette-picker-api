@@ -32,6 +32,35 @@ app.get('/api/v1/palettes/:id', (request, response) => {
     });
 });
 
+app.put('/api/v1/palettes/:id', (request, response) => {
+  const { id } = request.params;
+  const paletteItem = request.body;
+
+  for (let param of ['name', 'colors_array', 'project_id']) {
+    if (!paletteItem[param]) {
+      return response.status(422).json({ error: `Expected format: body = { name: <string>, colors_array: <array> }. You are missing a ${param} param.` })
+    }
+  }
+
+  database('palettes').where({ id }).update({ ...paletteItem })
+    .then(count => {
+      if (count) {
+        database('palette').where({ id }).first()
+          .then(palette => {
+            return response.status(200).json(palette);
+          })
+          .catch(error => {
+            response.status(500).json({ error })
+          });
+      } else {
+        response.status(404).send({ error: `Palette with id of ${id} could not be found.` });
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 app.delete('/api/v1/palettes/:id', (request, response) => {
   const id = request.params.id;
 
@@ -74,16 +103,22 @@ app.get('/api/v1/projects/:id', (request, response) => {
     });
 });
 
-app.patch('/api/v1/projects/:id', (request, response) => {
+app.put('/api/v1/projects/:id', (request, response) => {
   const id = request.params.id;
   const { name } = request.body;
+
+  if (!name) {
+    return response
+      .status(422)
+      .json({ error: 'Expected format: body = { name: <string> }. You are missing a name.' });
+  }
 
   database('projects').where({ id }).update({ name })
     .then(count => {
       if (count) {
-        response.sendStatus(204);
+        response.status(200).json({ id, name });
       } else {
-        response.sendStatus(202);
+        response.status(404).json({ error: `Project with id of ${id} was not found.` });
       }
     })
     .catch(error => {
