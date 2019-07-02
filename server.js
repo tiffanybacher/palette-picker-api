@@ -37,6 +37,22 @@ app.get('/api/v1/palettes/:id', (request, response) => {
     });
 });
 
+app.delete('/api/v1/palettes/:id', (request, response) => {
+  const id = request.params.id;
+
+  database('palettes').where({ id }).del()
+    .then(deleted => {
+      if (!deleted) {
+        response.sendStatus(202);
+      } else {
+        response.sendStatus(204);
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 app.get('/api/v1/projects', (request, response) => {
   database('projects').select()
     .then(projects => {
