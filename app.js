@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 app.get('/api/v1/palettes', (request, response) => {
-  database('palettes').select()
+  database('palettes').select('id', 'name', 'colors_array', 'project_id')
     .then(palettes => {
       response.status(200).json(palettes);
     })
@@ -19,7 +19,7 @@ app.get('/api/v1/palettes', (request, response) => {
 app.get('/api/v1/palettes/:id', (request, response) => {
   const id = request.params.id;
 
-  database('palettes').where({ id }).select()
+  database('palettes').where({ id }).select('id', 'name', 'colors_array', 'project_id')
     .then(palette => {
       if (palette.length) {
         response.status(200).json(palette[0]);
@@ -45,9 +45,11 @@ app.put('/api/v1/palettes/:id', (request, response) => {
   database('palettes').where({ id }).update({ ...paletteItem })
     .then(count => {
       if (count) {
-        database('palette').where({ id }).first()
+        database('palettes')
+          .where({ id })
+          .first('id', 'name', 'colors_array', 'project_id')
           .then(palette => {
-            return response.status(200).json(palette);
+            response.status(200).json(palette);
           })
           .catch(error => {
             response.status(500).json({ error })
