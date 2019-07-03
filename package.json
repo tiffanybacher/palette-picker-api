@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --forceExit",
-    "test:watch": "NODE_ENV=test jest --watchAll",
+    "test": "jest --forceExit",
+    "test:watch": "jest --watchAll",
     "start": "nodemon server.js",
     "lint": "eslint src/"
   },
