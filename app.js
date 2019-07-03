@@ -80,7 +80,7 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
 });
 
 app.get('/api/v1/projects', (request, response) => {
-  database('projects').select()
+  database('projects').select('id', 'name')
     .then(projects => {
       response.status(200).json(projects);
     })
@@ -92,7 +92,7 @@ app.get('/api/v1/projects', (request, response) => {
 app.get('/api/v1/projects/:id', (request, response) => {
   const id = request.params.id;
   
-  database('projects').where({ id }).select()
+  database('projects').where({ id }).select('id', 'name')
     .then(project => {
       if (project.length) {
         response.status(200).json(project[0]);
@@ -113,7 +113,7 @@ app.put('/api/v1/projects/:id', (request, response) => {
     return response
       .status(422)
       .json({ error: 'Expected format: body = { name: <string> }. You are missing a name.' });
-  }
+  };
 
   database('projects').where({ id }).update({ name })
     .then(count => {
