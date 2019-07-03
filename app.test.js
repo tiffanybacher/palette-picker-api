@@ -5,6 +5,10 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
 describe('Server', () => {
+  beforeEach(async () => {
+    await database.seed.run();
+  });
+
   describe('GET /api/v1/palettes', () => {
     it('should return all the palettes from the database with a status of 200', async () => {
       const response = await request(app).get('/api/v1/palettes');
