@@ -20,6 +20,31 @@ describe('Server', () => {
     });
   });
 
+  describe('POST /api/v1/palettes', () => {
+    it('should respond with a status of 422 and appropriate message', async () => {
+      const requestBody = {};
+      const response = await request(app).post('/api/v1/palettes').send(requestBody);
+      const expectedError = { error: `Expected Format: body = { name: <string>, colors_array: <array>, project_id: <number> ` };
+
+      expect(response.body).toEqual(expectedError);
+      expect(response.status).toEqual(422);
+    });
+
+    it('should respond with a status of 201 and new id', async () => {
+      const project_id = await database('projects').first('id');
+      const requestBody = {
+        name: 'Tiff',
+        colors_array: [],
+        project_id: project_id.id
+      };
+      const response = await request(app).post('/api/v1/palettes').send(requestBody);
+      const ids = await database('palettes').where('name', 'Tiff').select('id');
+
+      expect(response.body.id).toEqual(ids[0].id);
+      expect(response.status).toEqual(201);
+    });
+  });
+
   describe('GET /api/v1/palettes/:id', () => {
     it('should return a single palette with an id that matches the param id', async () => {
       const expectedPalette = await database('palettes').first('id', 'name', 'colors_array', 'project_id');
@@ -117,6 +142,28 @@ describe('Server', () => {
 
       expect(response.body).toEqual(expectedProjects);
       expect(response.status).toEqual(200);
+    });
+  });
+
+  describe('POST /api/v1/projects', () => {
+    it('should respond with a status of 422 and appropriate message', async () => {
+      const requestBody = {};
+      const response = await request(app).post('/api/v1/projects').send(requestBody);
+      const expectedError = { error: 'Expected Format: body = { name: <string>' };
+
+      expect(response.body).toEqual(expectedError);
+      expect(response.status).toEqual(422);
+    });
+
+    it('should respond with a status of 201 and new id', async () => {
+      const requestBody = {
+        name: 'Tiff'
+      };
+      const response = await request(app).post('/api/v1/projects').send(requestBody);
+      const ids = await database('projects').where('name', 'Tiff').select('id');
+
+      expect(response.body.id).toEqual(ids[0].id);
+      expect(response.status).toEqual(201);
     });
   });
 
