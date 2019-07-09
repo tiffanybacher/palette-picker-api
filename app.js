@@ -16,22 +16,6 @@ app.get('/api/v1/palettes', (request, response) => {
     });
 });
 
-app.post('/api/v1/palettes', (request, response) => {
-  const palette = request.body
-  for (let param of [ 'name', 'colors_array', 'project_id']) {
-    if (!palette[param]) {
-      response.status(422).json({ error: 'Expected Format: body = { name: <string>, colors_array: <array>, project_id: <number> ' });
-    };
-  };
-  database('palettes').insert(request.body, 'id')
-  .then(id => {
-    response.status(201).json({ id: id[0] });
-  })
-  .catch(error => {
-    response.status(500).json({ error });
-  });
-});
-
 app.get('/api/v1/palettes/:id', (request, response) => {
   const id = request.params.id;
 
@@ -96,7 +80,7 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
 });
 
 app.get('/api/v1/projects', (request, response) => {
-  database('projects').select('id', 'name')
+  database('projects').select()
     .then(projects => {
       response.status(200).json(projects);
     })
@@ -105,26 +89,10 @@ app.get('/api/v1/projects', (request, response) => {
     });
 });
 
-app.post('/api/v1/projects', (request, response) => {
-  const project = request.body
-  for (let param of [ 'name' ]) {
-    if (!project[param]) {
-      return response.status(422).json({ error: 'Expected Format: body = { name: <string>' });
-    };
-  };
-  database('projects').insert(request.body, 'id')
-  .then(ids => {
-    response.status(201).json({ id: ids[0] });
-  })
-  .catch(error => {
-    response.status(500).json({ error });
-  });
-});
-
 app.get('/api/v1/projects/:id', (request, response) => {
   const id = request.params.id;
   
-  database('projects').where({ id }).select('id', 'name')
+  database('projects').where({ id }).select()
     .then(project => {
       if (project.length) {
         response.status(200).json(project[0]);
@@ -145,7 +113,7 @@ app.put('/api/v1/projects/:id', (request, response) => {
     return response
       .status(422)
       .json({ error: 'Expected format: body = { name: <string> }. You are missing a name.' });
-  };
+  }
 
   database('projects').where({ id }).update({ name })
     .then(count => {
@@ -170,6 +138,16 @@ app.delete('/api/v1/projects/:id', (request, response) => {
       } else {
         response.sendStatus(204);
       }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
+app.get('/api/v1/users', (request, response) => {
+  database('users').select()
+    .then(users => {
+      response.status(200).json(users);
     })
     .catch(error => {
       response.status(500).json({ error });
