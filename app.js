@@ -144,6 +144,24 @@ app.delete('/api/v1/projects/:id', (request, response) => {
     });
 });
 
+app.post('/api/v1/users', (request, response) => {
+  const user = request.body;
+
+  for (let param of ['username', 'password']) {
+    if (!user[param]) {
+      response.status(422).json({ error: `Expected body to = { username: <string>, password: <string> }. Body is missing a '${param}' param.` });
+    } 
+  }
+
+  database('users').insert(user, 'id')
+    .then(user => {
+      response.status(201).json({ id: user[0] });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 app.get('/api/v1/users', (request, response) => {
   database('users').select()
     .then(users => {
