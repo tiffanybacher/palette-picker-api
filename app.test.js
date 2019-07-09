@@ -137,7 +137,7 @@ describe('Server', () => {
 
   describe('GET /api/v1/projects', () => {
     it('Should return all of the projects', async () => {
-      const expectedProjects = await database('projects').select('id', 'name')
+      const expectedProjects = await database('projects').select('id', 'name', 'user_id')
       const response = await request(app).get('/api/v1/projects');
 
       expect(response.body).toEqual(expectedProjects);
@@ -169,7 +169,7 @@ describe('Server', () => {
 
   describe('GET /api/v1/projects/:id', () => {
     it('should return the correct project and a status of 200', async () => {
-      const expectedProject = await database('projects').first('id', 'name');
+      const expectedProject = await database('projects').first('id', 'name', 'user_id');
       const id = expectedProject.id;
       const response = await request(app).get(`/api/v1/projects/${id}`);
 

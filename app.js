@@ -112,7 +112,7 @@ app.post('/api/v1/projects', (request, response) => {
 });
 
 app.get('/api/v1/projects', (request, response) => {
-  database('projects').select()
+  database('projects').select('id', 'name', 'user_id')
     .then(projects => {
       response.status(200).json(projects);
     })
@@ -124,7 +124,7 @@ app.get('/api/v1/projects', (request, response) => {
 app.get('/api/v1/projects/:id', (request, response) => {
   const id = request.params.id;
   
-  database('projects').where({ id }).select()
+  database('projects').where({ id }).select('id', 'name', 'user_id')
     .then(project => {
       if (project.length) {
         response.status(200).json(project[0]);
