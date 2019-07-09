@@ -154,4 +154,20 @@ app.get('/api/v1/users', (request, response) => {
     });
 });
 
+app.get('/api/v1/users/:id', (request, response) => {
+  const id = request.params.id;
+
+  database('users').where({ id }).first()
+    .then(user => {
+      if (user) {
+        response.status(200).json(user);
+      } else {
+        response.status(404).json({ error: `No user with the id of ${id} was found.` });
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 module.exports = app;
