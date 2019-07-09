@@ -169,16 +169,6 @@ app.post('/api/v1/users', (request, response) => {
     });
 });
 
-// app.get('/api/v1/users', (request, response) => {
-//   database('users').select()
-//     .then(users => {
-//       response.status(200).json(users);
-//     })
-//     .catch(error => {
-//       response.status(500).json({ error });
-//     });
-// });
-
 app.get('/api/v1/users/:username', (request, response) => {
   const username = request.params.username;
 
