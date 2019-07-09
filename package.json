@@ -12,10 +12,12 @@
   "author": "Tiffany Bacher & Brennan Duffey",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jest": "^24.5.0",
     "knex": "^0.18.1",
     "pg": "^7.11.0",
-    "jest": "^24.5.0",
     "supertest": "^4.0.0"
   },
   "devDependencies": {
