@@ -31,4 +31,12 @@ const projects = [
   }
 ]
 
-module.exports = projects;
+const user = {
+  username: 'kanyewest',
+  password: 'northwest'
+}
+
+module.exports = {
+  projects,
+  user
+}
