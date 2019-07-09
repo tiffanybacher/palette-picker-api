@@ -2,9 +2,11 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.post('/api/v1/palettes', (request, response) => {    
   const palette = request.body    
@@ -177,7 +179,7 @@ app.delete('/api/v1/projects/:id', (request, response) => {
 });
 
 app.post('/api/v1/users', (request, response) => {
-  const user = request.body;
+   const user = request.body;
 
   for (let param of ['username', 'password']) {
     if (!user[param]) {
