@@ -6,6 +6,22 @@ const app = express();
 
 app.use(express.json());
 
+app.post('/api/v1/palettes', (request, response) => {    
+  const palette = request.body    
+  for (let param of [ 'name', 'colors_array', 'project_id']) {    
+    if (!palette[param]) {    
+      response.status(422).json({ error: 'Expected Format: body = { name: <string>, colors_array: <array>, project_id: <number> ' });    
+    };    
+  };    
+  database('palettes').insert(request.body, 'id')    
+  .then(id => {    
+    response.status(201).json({ id: id[0] });    
+  })    
+  .catch(error => {    
+    response.status(500).json({ error });    
+  });    
+});
+
 app.get('/api/v1/palettes', (request, response) => {
   database('palettes').select('id', 'name', 'colors_array', 'project_id')
     .then(palettes => {
@@ -77,6 +93,22 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
     .catch(error => {
       response.status(500).json({ error });
     });
+});
+
+app.post('/api/v1/projects', (request, response) => {    
+  const project = request.body    
+  for (let param of [ 'name' ]) {    
+    if (!project[param]) {    
+      return response.status(422).json({ error: 'Expected Format: body = { name: <string>' });    
+    };    
+  };    
+  database('projects').insert(request.body, 'id')    
+  .then(ids => {    
+    response.status(201).json({ id: ids[0] });    
+  })    
+  .catch(error => {    
+    response.status(500).json({ error });    
+  });    
 });
 
 app.get('/api/v1/projects', (request, response) => {
