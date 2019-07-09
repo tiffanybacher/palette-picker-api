@@ -149,9 +149,16 @@ app.post('/api/v1/users', (request, response) => {
 
   for (let param of ['username', 'password']) {
     if (!user[param]) {
-      response.status(422).json({ error: `Expected body to = { username: <string>, password: <string> }. Body is missing a '${param}' param.` });
+      return response.status(422).json({ error: `Expected body to = { username: <string>, password: <string> }. Body is missing a '${param}' param.` });
     } 
   }
+
+  database('users').where({ username: user.username }).first()
+    .then(user => {
+      if (user) {
+        return response.status(409).json({ error: `Resource already exists with username of '${user.username}'.` });
+      }
+    });
 
   database('users').insert(user, 'id')
     .then(user => {
@@ -162,15 +169,15 @@ app.post('/api/v1/users', (request, response) => {
     });
 });
 
-app.get('/api/v1/users', (request, response) => {
-  database('users').select()
-    .then(users => {
-      response.status(200).json(users);
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
-});
+// app.get('/api/v1/users', (request, response) => {
+//   database('users').select()
+//     .then(users => {
+//       response.status(200).json(users);
+//     })
+//     .catch(error => {
+//       response.status(500).json({ error });
+//     });
+// });
 
 app.get('/api/v1/users/:username', (request, response) => {
   const username = request.params.username;
