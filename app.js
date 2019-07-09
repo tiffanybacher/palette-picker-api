@@ -172,15 +172,19 @@ app.get('/api/v1/users', (request, response) => {
     });
 });
 
-app.get('/api/v1/users/:id', (request, response) => {
-  const id = request.params.id;
+app.get('/api/v1/users/:username', (request, response) => {
+  const username = request.params.username;
 
-  database('users').where({ id }).first()
+  database('users').where({ username }).first()
     .then(user => {
       if (user) {
-        response.status(200).json(user);
+        response.status(200)
+          .json({ 
+            id: user.id, 
+            username: user.username 
+          });
       } else {
-        response.status(404).json({ error: `No user with the id of ${id} was found.` });
+        response.status(404).json({ error: `No user with the username of ${username} was found.` });
       }
     })
     .catch(error => {
