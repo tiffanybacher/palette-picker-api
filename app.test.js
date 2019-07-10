@@ -275,4 +275,43 @@ describe('Server', () => {
       expect(response.body).toEqual(expectedResponse);
     });
   });
+
+  describe('GET /api/v1/users/login', () => {
+    beforeEach(async () => {
+      const user = {
+        username: 'tiffanybacher',
+        password: 'password'
+      }
+
+      await request(app).post('/api/v1/users').send(user);
+    });
+
+    it('should return a 404 if the username is not found' , async () => {
+      const username = 'tiffanyb';
+      const password = 'password';
+      const response = await request(app).get(`/api/vi/users/${username}/${password}`);
+      
+      expect(response.status).toEqual(404);
+    });
+
+    it.skip('should return a 422 with a message if the password does not match', async () => {
+      const username = 'tiffanybacher';
+      const password = 'wrong';
+      const response = await request(app).get(`/api/vi/users/${username}/${password}`);
+     
+      expect(response.status).toEqual(422);
+    });
+
+    it.skip('should return a 200 and return the user id and username', async () => {
+      const username = 'tiffanybacher';
+      const password = 'password';
+      const response = await request(app).get(`/api/vi/users/${username}/${password}`);
+      const expectedResponse = {
+        id: response.id,
+        username
+      }
+
+      expect(response.body).toEqual(expectedResponse);
+    });
+  });
 });

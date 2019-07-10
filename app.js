@@ -205,16 +205,16 @@ app.post('/api/v1/users', (request, response) => {
       .then(userInfo => {
         const { id, username } = userInfo[0];
 
-        response.status(201).json({ id, username });
+        return response.status(201).json({ id, username });
       })
       .catch(error => {
-        response.status(500).json({ error });
+        return response.status(500).json({ error });
       });
    });
 });
 
-app.get('/api/v1/users/login', (request, response) => {
-  const { username, password } = request.body;
+app.get('/api/v1/users/:username/:password', (request, response) => {
+  const { username, password } = request.params;
 
   database('users').where({ username }).first()
     .then(user => {
