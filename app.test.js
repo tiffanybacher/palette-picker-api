@@ -149,20 +149,22 @@ describe('Server', () => {
     it('should respond with a status of 422 and appropriate message', async () => {
       const requestBody = {};
       const response = await request(app).post('/api/v1/projects').send(requestBody);
-      const expectedError = { error: 'Expected Format: body = { name: <string>' };
+      const expectedError = { error: 'Expected Format: body = { name: <string>, user_id: <number> }' };
 
       expect(response.body).toEqual(expectedError);
       expect(response.status).toEqual(422);
     });
 
     it('should respond with a status of 201 and new id', async () => {
+      const { id } = await database('users').first('id');
       const requestBody = {
-        name: 'Tiff'
+        name: 'Tiff',
+        user_id: id
       };
       const response = await request(app).post('/api/v1/projects').send(requestBody);
       const ids = await database('projects').where('name', 'Tiff').select('id');
 
-      expect(response.body.id).toEqual(ids[0].id);
+      expect(response.body).toEqual(ids[0]);
       expect(response.status).toEqual(201);
     });
   });

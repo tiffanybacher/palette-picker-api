@@ -36,15 +36,15 @@ app.get('/api/v1/palettes', (request, response) => {
     .catch(error => {
       response.status(500).json({ error });
     });
+  } else {
+    database('palettes').where('project_id', project_id).select('id', 'name', 'colors_array', 'project_id')
+      .then(palettes => {
+        response.status(200).json(palettes);
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
   };
-
-  database('palettes').where('project_id', project_id).select('id', 'name', 'colors_array', 'project_id')
-    .then(palettes => {
-      response.status(200).json(palettes);
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
 });
 
 app.get('/api/v1/palettes/:id', (request, response) => {
@@ -128,13 +128,23 @@ app.post('/api/v1/projects', (request, response) => {
 
 app.get('/api/v1/projects', (request, response) => {
   const user_id = request.query.user_id;
-  database('projects').where('user_id', user_id).select('id', 'name', 'user_id')
-    .then(projects => {
-      response.status(200).json(projects);
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  if(!user_id) {
+    database('projects').select('id', 'name', 'user_id')
+      .then(projects => {
+        response.status(200).json(projects);
+      })
+      .catch(error => {
+        response.status(500).json({ error })
+      });
+  } else {
+    database('projects').where('user_id', user_id).select('id', 'name', 'user_id')
+      .then(projects => {
+        response.status(200).json(projects);
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
+  };
 });
 
 app.get('/api/v1/projects/:id', (request, response) => {
@@ -236,7 +246,8 @@ app.get('/api/v1/users/:username/:password', (request, response) => {
           .json({ 
             error: 'Username not found.' 
           });
-      } 
+      };
+
 
       bcrypt.compare(password, user.password, (err, res) => {
         if (!res) {
