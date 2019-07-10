@@ -235,15 +235,4 @@ describe('Server', () => {
       expect(response.status).toEqual(204);
     });
   });
-
-  // describe('POST /api/v1/projects', () => {
-  //   it('should return the id and a status of 201 on successful post', async () => {
-  //     const requestBody = {
-  //       name: 'Joe Johnson'
-  //     };
-  //     const response = request(app).post(requestBody);
-
-
-  //   });
-  // });
 });
