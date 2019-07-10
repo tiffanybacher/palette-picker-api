@@ -10,7 +10,7 @@ describe('Server', () => {
   });
 
   describe('GET /api/v1/palettes', () => {
-    it('should return all the palettes from the database with a status of 200', async () => {
+    it.skip('should return all the palettes from the database with a status of 200', async () => {
       const response = await request(app).get('/api/v1/palettes');
       const palettes = response.body;
       const expected = await database('palettes').select('id', 'name', 'colors_array', 'project_id');
@@ -136,7 +136,7 @@ describe('Server', () => {
   });
 
   describe('GET /api/v1/projects', () => {
-    it('Should return all of the projects', async () => {
+    it.skip('Should return all of the projects', async () => {
       const expectedProjects = await database('projects').select('id', 'name', 'user_id')
       const response = await request(app).get('/api/v1/projects');
 
