@@ -201,9 +201,11 @@ app.post('/api/v1/users', (request, response) => {
         }
       });
 
-    database('users').insert(user, 'id')
-      .then(user => {
-        response.status(201).json({ id: user[0] });
+    database('users').insert(user, ['id', 'username'])
+      .then(userInfo => {
+        const { id, username } = userInfo[0];
+
+        response.status(201).json({ id, username });
       })
       .catch(error => {
         response.status(500).json({ error });
