@@ -211,25 +211,32 @@ app.post('/api/v1/users', (request, response) => {
    });
 });
 
-app.get('/api/v1/users/:username', (request, response) => {
-  const { username } = request.params;
+app.get('/api/v1/users/login', (request, response) => {
+  const { username, password } = request.body;
 
   database('users').where({ username }).first()
     .then(user => {
-      if(!user) {
+      if (!user) {
         return response.status(404)
           .json({ 
-            error: `No username of '${username}' was found.` 
+            error: 'Username not found.' 
           });
       } 
 
-      if (user) {
-        return response.status(200)
-          .json({ 
-            id: user.id, 
-            username: user.username 
-          });
-      }
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (!res) {
+          return response.status(422)
+            .json({
+              error: 'Incorrect password.'
+            })
+        } else {
+          return response.status(200)
+            .json({ 
+              id: user.id, 
+              username: user.username 
+            });
+        }
+      });
     })
     .catch(error => {
       response.status(500).json({ error });
