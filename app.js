@@ -3,6 +3,7 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 const app = express();
 
 app.use(express.json());
@@ -179,28 +180,35 @@ app.delete('/api/v1/projects/:id', (request, response) => {
 });
 
 app.post('/api/v1/users', (request, response) => {
-   const user = request.body;
+  const { username, password } = request.body;
 
-  for (let param of ['username', 'password']) {
-    if (!user[param]) {
-      return response.status(422).json({ error: `Expected body to = { username: <string>, password: <string> }. Body is missing a '${param}' param.` });
-    } 
-  }
+  bcrypt.hash(password, 10, (err, hash) => {
+    const user = {
+      username,
+      password: hash
+    };
 
-  database('users').where({ username: user.username }).first()
-    .then(user => {
-      if (user) {
-        return response.status(409).json({ error: `Resource already exists with username of '${user.username}'.` });
-      }
-    });
+    for (let param of ['username', 'password']) {
+      if (!user[param]) {
+        return response.status(422).json({ error: `Expected body to = { username: <string>, password: <string> }. Body is missing a '${param}' param.` });
+      } 
+    }
 
-  database('users').insert(user, 'id')
-    .then(user => {
-      response.status(201).json({ id: user[0] });
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+    database('users').where({ username: user.username }).first()
+      .then(user => {
+        if (user) {
+          return response.status(409).json({ error: `Resource already exists with username of '${user.username}'.` });
+        }
+      });
+
+    database('users').insert(user, 'id')
+      .then(user => {
+        response.status(201).json({ id: user[0] });
+      })
+      .catch(error => {
+        response.status(500).json({ error });
+      });
+   });
 });
 
 app.get('/api/v1/users/:username', (request, response) => {
