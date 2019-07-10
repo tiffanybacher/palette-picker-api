@@ -26,16 +26,18 @@ app.post('/api/v1/palettes', (request, response) => {
 });
 
 app.get('/api/v1/palettes', (request, response) => {
-  const project_id = request.query.project_id
+  const project_id = request.query.project_id;
+
   if (!project_id) {
     database('palettes').select('id', 'name', 'colors_array', 'project_id')
     .then(palettes => {
-      response.status(200).json(palettes)
+      response.status(200).json(palettes);
     })
     .catch(error => {
-      response.status(500).json({ error })
+      response.status(500).json({ error });
     });
   };
+
   database('palettes').where('project_id', project_id).select('id', 'name', 'colors_array', 'project_id')
     .then(palettes => {
       response.status(200).json(palettes);
