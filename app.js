@@ -212,18 +212,23 @@ app.post('/api/v1/users', (request, response) => {
 });
 
 app.get('/api/v1/users/:username', (request, response) => {
-  const username = request.params.username;
+  const { username } = request.params;
 
   database('users').where({ username }).first()
     .then(user => {
+      if(!user) {
+        return response.status(404)
+          .json({ 
+            error: `No username of '${username}' was found.` 
+          });
+      } 
+
       if (user) {
-        response.status(200)
+        return response.status(200)
           .json({ 
             id: user.id, 
             username: user.username 
           });
-      } else {
-        response.status(404).json({ error: `No user with the username of ${username} was found.` });
       }
     })
     .catch(error => {
