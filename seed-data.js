@@ -5,11 +5,11 @@ const projects = [
       {
         name: 'Reggae Colors',
         colors: [
-          '5F0F40',
-          '9A031E',
-          'FB8B24',
-          'E36414',
-          '0F4C5C'
+          { id: 1, hexCode: '#FDC58D', isLocked: false },
+          { id: 2, hexCode: '#FFFFAA', isLocked: false },
+          { id: 3, hexCode: '#95E38A', isLocked: false },
+          { id: 4, hexCode: '#779DF2', isLocked: false },
+          { id: 5, hexCode: '#D2BEFD', isLocked: false }
         ]
       }
     ]
@@ -20,11 +20,11 @@ const projects = [
       {
         name: 'Website Colors',
         colors: [
-          '495867',
-          '577399',
-          'BDD5EA',
-          'F7F7FF',
-          'FE5F55'
+          { id: 1, hexCode: '#FDC58D', isLocked: false },
+          { id: 2, hexCode: '#FFFFAA', isLocked: false },
+          { id: 3, hexCode: '#95E38A', isLocked: false },
+          { id: 4, hexCode: '#779DF2', isLocked: false },
+          { id: 5, hexCode: '#D2BEFD', isLocked: false }
         ]
       }
     ]
