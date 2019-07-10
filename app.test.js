@@ -236,14 +236,43 @@ describe('Server', () => {
     });
   });
 
-  // describe('POST /api/v1/projects', () => {
-  //   it('should return the id and a status of 201 on successful post', async () => {
-  //     const requestBody = {
-  //       name: 'Joe Johnson'
-  //     };
-  //     const response = request(app).post(requestBody);
+  describe('POST /api/v1/users', () => {
+    let user;
 
+    beforeEach(() => {
+      user = {
+       username: 'brennan',
+       password: 'password'
+      } 
+    });
 
-  //   });
-  // });
+    it('should respond with a 422 and message if body is missing a param', async () => {
+      user = {};
+      const response = await request(app).post('/api/v1/users').send(user);
+      const expectedError = { error: `Expected body to = { username: <string>, password: <string> }. Body is missing a 'username' param.` };
+
+      expect(response.body).toEqual(expectedError);
+
+      expect(response.status).toEqual(422);
+    });
+
+    it('should respond with a 409 and a message if username already exists', async () => {
+      await request(app).post('/api/v1/users').send(user);
+
+      const response = await request(app).post('/api/v1/users').send(user);
+      const expectedError = { error: `Resource already exists with username of 'brennan'.` };
+
+      expect(response.body).toEqual(expectedError);
+    });
+
+    it('should respond with a 201 and the user info if successful', async () => {
+      const response = await request(app).post('/api/v1/users').send(user);
+      const expectedResponse = {
+        id: response.body.id,
+        username: 'brennan'
+      };
+
+      expect(response.body).toEqual(expectedResponse);
+    });
+  });
 });
