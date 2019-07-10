@@ -16,7 +16,7 @@ app.post('/api/v1/palettes', (request, response) => {
       response.status(422).json({ error: 'Expected Format: body = { name: <string>, colors_array: <array>, project_id: <number> ' });    
     };    
   };    
-  database('palettes').insert(request.body, 'id')    
+  database('palettes').insert(palette, 'id')    
   .then(id => {    
     response.status(201).json({ id: id[0] });    
   })    
@@ -26,7 +26,17 @@ app.post('/api/v1/palettes', (request, response) => {
 });
 
 app.get('/api/v1/palettes', (request, response) => {
-  database('palettes').select('id', 'name', 'colors_array', 'project_id')
+  const project_id = request.query.project_id
+  if (!project_id) {
+    database('palettes').select('id', 'name', 'colors_array', 'project_id')
+    .then(palettes => {
+      response.status(200).json(palettes)
+    })
+    .catch(error => {
+      response.status(500).json({ error })
+    });
+  };
+  database('palettes').where('project_id', project_id).select('id', 'name', 'colors_array', 'project_id')
     .then(palettes => {
       response.status(200).json(palettes);
     })
@@ -100,12 +110,12 @@ app.delete('/api/v1/palettes/:id', (request, response) => {
 
 app.post('/api/v1/projects', (request, response) => {    
   const project = request.body    
-  for (let param of [ 'name' ]) {    
+  for (let param of [ 'name', 'user_id' ]) {    
     if (!project[param]) {    
-      return response.status(422).json({ error: 'Expected Format: body = { name: <string>' });    
+      response.status(422).json({ error: 'Expected Format: body = { name: <string>, user_id: <number> }' });    
     };    
   };    
-  database('projects').insert(request.body, 'id')    
+  database('projects').insert(project, 'id')    
   .then(ids => {    
     response.status(201).json({ id: ids[0] });    
   })    
@@ -115,7 +125,8 @@ app.post('/api/v1/projects', (request, response) => {
 });
 
 app.get('/api/v1/projects', (request, response) => {
-  database('projects').select('id', 'name', 'user_id')
+  const user_id = request.query.user_id;
+  database('projects').where('user_id', user_id).select('id', 'name', 'user_id')
     .then(projects => {
       response.status(200).json(projects);
     })
@@ -202,19 +213,19 @@ app.post('/api/v1/users', (request, response) => {
       });
 
     database('users').insert(user, ['id', 'username'])
-      .then(user => {
-        const { id, username } = user[0];
-        
-        response.status(201).json({ id, username });
+      .then(userInfo => {
+        const { id, username } = userInfo[0];
+
+        return response.status(201).json({ id, username });
       })
       .catch(error => {
-        response.status(500).json({ error });
+        return response.status(500).json({ error });
       });
    });
 });
 
-app.get('/api/v1/users/login', (request, response) => {
-  const { username, password } = request.body;
+app.get('/api/v1/users/:username/:password', (request, response) => {
+  const { username, password } = request.params;
 
   database('users').where({ username }).first()
     .then(user => {
