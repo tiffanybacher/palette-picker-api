@@ -249,5 +249,3 @@ Status Code 201 OK
   "id": 8, 
   "username": "danny_silk" 
 }
-
-
