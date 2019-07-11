@@ -1,54 +1,59 @@
 const seedData = require('../../../seed-data');
 const projectData = seedData.projects;
-const userData = seedData.user;
+const userData = seedData.users;
 
-const createProject = (knex, project, userID) => {
-  return knex('projects').insert({
-    name: project.name,
-    user_id: userID
+const createUser = (knex, user) => {
+  return knex('users').insert({
+    username: user.username,
+    password: user.password
   }, 'id')
-    .then(projectId => {
-      let palettePromises = [];
-
-      project.palettes.forEach(palette => {
-        palettePromises.push(createPalette(knex, { 
-          name: palette.name,
-          colors_array: palette.colors,
-          project_id: projectId[0]
-        }));
-      });
-
-      return Promise.all(palettePromises);
+  .then(userId => {
+    let projectPromises = [];
+      
+    projectData.forEach(project => {
+      projectPromises.push(createProject(knex, project, userId[0]));
     });
+
+    return Promise.all(projectPromises);
+  });
 }
 
-const createPalette = (knex, palette) => {
-  return knex('palettes').insert(palette);
+const createProject = (knex, project, userId) => {
+  return knex('projects').insert({
+    name: project.name,
+    user_id: userId
+  }, 'id')
+  .then(projectId => {
+    let palettePromises = [];
+
+    project.palettes.forEach(palette => {
+      palettePromises.push(createPalette(knex, palette, projectId[0]));
+    });
+
+    return Promise.all(palettePromises);
+  });
+}
+
+const createPalette = (knex, palette, projectId) => {
+  return knex('palettes').insert({ 
+    name: palette.name,
+    colors_array: palette.colors,
+    project_id: projectId
+  });
 }
 
 exports.seed = function(knex) {
-  let userID;
-
   return knex('palettes').del()
     .then(() => knex('projects').del())
     .then(() => knex('users').del())
     .then(() => {
-      const userPromise = knex('users').insert({
-        username: userData.username,
-        password: userData.password
-      }, 'id')
-      .then(ID => userID = ID[0])
-      
-      return Promise.resolve(userPromise);
-    })
-    .then(() => {
-      let projectPromises = [];
-      
-      projectData.forEach(project => {
-        projectPromises.push(createProject(knex, project, userID));
-      });
+      let userPromises = []; 
 
-      return Promise.all(projectPromises);
+      userData.forEach(user => {
+        userPromises.push(createUser(knex, user))
+      });
+  
+      return Promise.all(userPromises);
     })
     .catch(error => console.log(`Error in seeding data. ${error}`));
 };
