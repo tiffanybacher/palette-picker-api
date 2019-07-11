@@ -31,12 +31,13 @@ const projects = [
   }
 ]
 
-const user = {
+const users = [{
   username: 'kanyewest',
-  password: 'northwest'
-}
+  password: 'northwest',
+  projects
+}]
 
 module.exports = {
   projects,
-  user
+  users
 }
