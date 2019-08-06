@@ -23,7 +23,8 @@ then:
 ```bash
 npm start
 ``` 
-Now to run the server locally in the development environment with: 
+
+Then follow the setup directions for the front end [here.](https://github.com/tiffanybacher/palette-picker-ui)
 
 ## Route Information
 
