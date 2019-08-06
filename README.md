@@ -5,20 +5,20 @@ This is a translational one-to-many back-end repository storing projects, palett
 
 ## Setup
 
-Simply begin by cloning down the repository:
+Simply begin by cloning down this repository:
 
 ```bash
 git clone https://github.com/BrennanDuffey/build-your-own-backend.git
 ```
 
-Once cloned run:
+Install dependencies:
 
 ```bash
 cd palette-picker-api
 npm i
 ``` 
 
-then:
+Start in development mode:
 
 ```bash
 npm start
