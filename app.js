@@ -9,6 +9,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (request, response) => {
+  response.status(200).send('Welcome to Palette Picker API!');
+});
+
 app.post('/api/v1/palettes', (request, response) => {    
   const palette = request.body    
   for (let param of [ 'name', 'colors_array', 'project_id']) {    
@@ -247,7 +251,6 @@ app.get('/api/v1/users/:username/:password', (request, response) => {
             error: 'Username not found.' 
           });
       };
-
 
       bcrypt.compare(password, user.password, (err, res) => {
         if (!res) {
