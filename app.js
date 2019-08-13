@@ -17,7 +17,7 @@ app.post('/api/v1/palettes', (request, response) => {
   const palette = request.body    
   for (let param of [ 'name', 'colors_array', 'project_id']) {    
     if (!palette[param]) {    
-      response.status(422).json({ error: 'Expected Format: body = { name: <string>, colors_array: <array>, project_id: <number> ' });    
+      return response.status(422).json({ error: 'Expected Format: body = { name: <string>, colors_array: <array>, project_id: <number> ' });    
     };    
   };    
   database('palettes').insert(palette, 'id')    
@@ -118,7 +118,7 @@ app.post('/api/v1/projects', (request, response) => {
   const project = request.body    
   for (let param of [ 'name', 'user_id' ]) {    
     if (!project[param]) {    
-      response.status(422).json({ error: 'Expected Format: body = { name: <string>, user_id: <number> }' });    
+      return response.status(422).json({ error: 'Expected Format: body = { name: <string>, user_id: <number> }' });    
     };    
   };    
   database('projects').insert(project, 'id')    
@@ -224,7 +224,7 @@ app.post('/api/v1/users', (request, response) => {
     database('users').where({ username: user.username }).first()
       .then(user => {
         if (user) {
-          return response.status(409).json({ error: `Resource already exists with username of '${user.username}'.` });
+          response.status(409).json({ error: `Resource already exists with username of '${user.username}'.` });
         }
       });
 

@@ -18,6 +18,15 @@ describe('Server', () => {
       expect(palettes).toEqual(expected);
       expect(response.status).toEqual(200);
     });
+
+    it('should return all the palettes from the database with the correct project_id', async () => {
+      const { project_id } = await database('palettes').first();
+      const response = await request(app).get(`/api/v1/palettes?project_id=${project_id}`);
+      const expected = await database('palettes').where({ project_id }).select('id', 'name', 'colors_array', 'project_id');
+
+      expect(response.body).toEqual(expected);
+      expect(response.status).toEqual(200);
+    });
   });
 
   describe('POST /api/v1/palettes', () => {
@@ -136,11 +145,20 @@ describe('Server', () => {
   });
 
   describe('GET /api/v1/projects', () => {
-    it.skip('Should return all of the projects', async () => {
+    it('Should return all of the projects', async () => {
       const expectedProjects = await database('projects').select('id', 'name', 'user_id')
       const response = await request(app).get('/api/v1/projects');
 
       expect(response.body).toEqual(expectedProjects);
+      expect(response.status).toEqual(200);
+    });
+
+    it('should return all the projects from the database with the correct user_id', async () => {
+      const { user_id } = await database('projects').first();
+      const response = await request(app).get(`/api/v1/projects?user_id=${user_id}`);
+      const expected = await database('projects').where({ user_id }).select('id', 'name', 'user_id');
+
+      expect(response.body).toEqual(expected);
       expect(response.status).toEqual(200);
     });
   });
@@ -224,7 +242,7 @@ describe('Server', () => {
   describe('DELETE /api/v1/projects/:id', () => {
     it('should return a status of 202', async () => {
       const { id } = await database('projects').first('id');
-      const response = await request(app).delete(`/api/v1/projects/${id -1}`);
+      const response = await request(app).delete(`/api/v1/projects/${id - 10}`);
       const { status, body } = response;
 
       expect(status).toEqual(202);
@@ -258,13 +276,11 @@ describe('Server', () => {
       expect(response.status).toEqual(422);
     });
 
-    it.skip('should respond with a 409 and a message if username already exists', async () => {
-      await request(app).post('/api/v1/users').send(user);
-
+    it.skip('should respond with a 409 error  if username already exists', async () => {
       const response = await request(app).post('/api/v1/users').send(user);
       const expectedError = { error: `Resource already exists with username of 'brennan'.` };
 
-      expect(response.body).toEqual(expectedError);
+      expect(response.status).toEqual(409);
     });
 
     it('should respond with a 201 and the user info if successful', async () => {
@@ -289,17 +305,17 @@ describe('Server', () => {
     });
 
     it('should return a 404 if the username is not found' , async () => {
-      const username = 'tiffanyb';
-      const password = 'password';
-      const response = await request(app).get(`/api/vi/users/${username}/${password}`);
+      const username = 'tiff';
+      const password = 'northwest';
+      
+      const response = await request(app).get(`/api/v1/users/${username}/${password}`);
       
       expect(response.status).toEqual(404);
     });
 
-    it.skip('should return a 422 with a message if the password does not match', async () => {
-      const username = 'tiffanybacher';
-      const password = 'wrong';
-      const response = await request(app).get(`/api/vi/users/${username}/${password}`);
+    it('should return a 422 with a message if the password does not match', async () => {
+      const { username, password } = await database('users').first();
+      const response = await request(app).get(`/api/v1/users/${username}/${password}`);
      
       expect(response.status).toEqual(422);
     });
@@ -307,9 +323,9 @@ describe('Server', () => {
     it.skip('should return a 200 and return the user id and username', async () => {
       const username = 'tiffanybacher';
       const password = 'password';
-      const response = await request(app).get(`/api/vi/users/${username}/${password}`);
+      const response = await request(app).get(`/api/v1/users/${username}/${password}`);
       const expectedResponse = {
-        id: response.id,
+        id: response.body.id,
         username
       }
 
