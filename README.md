@@ -3,7 +3,7 @@
 ## Description
 This is a translational one-to-many back-end repository storing projects, palettes, and user information.
 
-## Deployed at https://palette-picker-api-tbbd.herokuapp.com/
+#### Deployed at https://palette-picker-api-tbbd.herokuapp.com/
 
 ## Setup
 
